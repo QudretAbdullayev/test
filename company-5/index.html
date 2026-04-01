@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile settings - CyberSec Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        /* Custom font */
+        body {
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        /* Label Styles */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #333;
+            font-size: 14px;
+        }
+
+        /* Input Styles */
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: "DM Sans", sans-serif;
+            box-sizing: border-box;
+            background-color: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: #1f2937;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #41cc06;
+            box-shadow: rgba(65, 204, 6, 0.1) 0px 0px 0px 3px;
+        }
+
+        .form-control:disabled {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        /* Input Group Styles (for Website field) */
+        .input-group {
+            display: flex;
+        }
+        .input-group-text {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #6b7280;
+            text-align: center;
+            white-space: nowrap;
+            background-color: #f9fafb;
+            border: 1px solid #ccc;
+            border-right: 0;
+            border-radius: 6px 0 0 6px;
+        }
+        .input-group .form-control {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        /* Toggle Switch Override for Labels inside Toggles */
+        label.toggle-wrapper {
+            margin-bottom: 0;
+            display: inline-flex;
+        }
+
+        /* Drag and Drop styles */
+        #drop-zone {
+            transition: all 0.2s ease-in-out;
+        }
+        #drop-zone.drag-over {
+            border-color: #41cc06;
+            background-color: #f0fdf4;
+        }
+
+        /* Modal transitions */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        body.modal-active {
+            overflow-x: hidden;
+            overflow-y: hidden !important;
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1d5db; 
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; 
+        }
+
+        /* Tab Styles */
+        .tab-btn.active {
+            color: #031987;
+            border-bottom-color: #41cc06;
+        }
+        .tab-btn {
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue': '#031987',
+                        'brand-green': '#41cc06',
+                        'brand-green-dark': '#35a205',
+                        'brand-green-light': '#eafce2',
+                        'brand-green-border': '#86efac',
+                        'activity-green-bg': '#f0fdf4',
+                        'activity-green-text': '#41cc06',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-gray-800 antialiased">
+
+    <main class="w-full min-h-screen bg-white">
+        <div class="mx-auto px-8 pb-8 pt-8 sm:px-12 sm:pb-12 sm:pt-12 lg:px-16 lg:pb-16 lg:pt-16 max-w-7xl space-y-6">
+            
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-brand-blue">Profile settings</h1>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Stat Card 1 -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6 shadow-sm">
+                    <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm text-gray-500">Active bug bounties</p>
+                        <p class="text-2xl font-bold text-brand-blue break-words">5</p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6 shadow-sm">
+                    <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm text-gray-500">Ongoing penetration tests</p>
+                        <p class="text-2xl font-bold text-brand-blue break-words">2</p>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6 shadow-sm">
+                    <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                             <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm text-gray-500">Reports received</p>
+                        <p class="text-2xl font-bold text-brand-blue break-words">1 245</p>
+                    </div>
+                </div>
+
+                 <!-- Stat Card 4 -->
+                 <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6 shadow-sm">
+                    <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm text-gray-500">Bounties paid</p>
+                        <p class="text-2xl font-bold text-brand-blue break-words">428 €</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="border-b border-gray-200">
+                <nav class="flex gap-8 overflow-x-auto" aria-label="Tabs">
+                    <button type="button" onclick="switchTab('general')" id="tab-general" class="tab-btn active py-4 text-sm font-normal hover:text-brand-blue transition-colors whitespace-nowrap">
+                        General info
+                    </button>
+                    <button type="button" onclick="switchTab('security')" id="tab-security" class="tab-btn py-4 text-sm font-normal hover:text-brand-blue transition-colors whitespace-nowrap">
+                        Security
+                    </button>
+                    <button type="button" onclick="switchTab('notifications')" id="tab-notifications" class="tab-btn py-4 text-sm font-normal hover:text-brand-blue transition-colors whitespace-nowrap">
+                        Notifications
+                    </button>
+                    <button type="button" onclick="switchTab('agreements')" id="tab-agreements" class="tab-btn py-4 text-sm font-normal hover:text-brand-blue transition-colors whitespace-nowrap">
+                        Signed agreements
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Unified Form wrapping tab content -->
+            <form id="profile-form">
+                
+                <!-- TAB 1: General Info -->
+                <div id="content-general" class="tab-content animate-fadeIn">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+                        <h3 class="text-lg font-bold text-brand-blue border-b border-gray-100 pb-2 mb-6">General information</h3>
+                        
+                        <!-- Profile Picture Section with Drag & Drop -->
+                        <div id="drop-zone" class="relative border-2 border-dashed border-transparent rounded-lg p-4 mb-8 -mx-4 sm:mx-0 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                            <div class="shrink-0 relative group">
+                                <img id="profile-preview" class="h-24 w-24 object-contain bg-white rounded-full border-2 border-brand-green grayscale" src="melp.svg" alt="Current profile photo" onerror="this.onerror=null;this.src='https://placehold.co/96x96/cccccc/ffffff?text=C';">
+                                <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="document.getElementById('logo-upload').click()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-center sm:text-left flex-1">
+                                <h3 class="text-lg font-medium text-gray-900">Company logo</h3>
+                                <p class="text-sm text-gray-500 mb-3">JPG, GIF or PNG. Max size of 800K. Drag & drop or click to change.</p>
+                                <input type="file" id="logo-upload" accept="image/png, image/jpeg, image/gif" class="hidden">
+                                <button type="button" onclick="document.getElementById('logo-upload').click()" class="bg-white py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green">
+                                    Change photo
+                                </button>
+                            </div>
+                            <div id="drag-overlay" class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-lg pointer-events-none opacity-0 transition-opacity">
+                                <p class="text-brand-green font-bold text-lg">Drop image here</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="company-name">Company name</label>
+                                <input type="text" name="company-name" id="company-name" value="CyberSec Solutions" class="form-control">
+                            </div>
+                            <div>
+                                <label for="website">Website</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">https://</span>
+                                    <input type="text" name="website" id="website" value="cybersec-solutions.com" class="form-control">
+                                </div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="contact-person">Main contact person</label>
+                                <input type="text" name="contact-person" id="contact-person" value="John Doe" class="form-control md:w-[calc(50%-0.75rem)]">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="about">Useful information</label>
+                            <p class="text-xs text-gray-500 mb-2">Provide any additional details about your organization and security policies.</p>
+                            <textarea id="about" name="about" rows="4" class="form-control">CyberSec Solutions is a leading provider of enterprise security software. We value the contribution of the security research community and are committed to fixing vulnerabilities quickly.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Security -->
+                <div id="content-security" class="tab-content hidden animate-fadeIn">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Email Section -->
+                            <div>
+                                <h3 class="text-lg font-bold text-brand-blue mb-4">Login details</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="email">Email address</label>
+                                        <input type="email" id="email" value="contact@cybersec-solutions.com" disabled class="form-control">
+                                        <p class="mt-2 text-xs text-gray-500">Contact support to change your primary email.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Password Section -->
+                            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                                <h3 class="text-lg font-bold text-brand-blue mb-2">Password</h3>
+                                <p class="text-sm text-gray-500 mb-4">Protect your account and bounty programs. Regular updates are recommended.</p>
+                                <button type="button" id="open-password-modal" class="w-full flex justify-center items-center space-x-2 py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                    </svg>
+                                    <span>Change password</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Notifications -->
+                <div id="content-notifications" class="tab-content hidden animate-fadeIn">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        
+                        <!-- Platform Updates Section (Card 1) -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+                            <h3 class="text-lg font-bold text-brand-blue mb-2">Platform updates</h3>
+                            <p class="text-sm text-gray-500 mb-6">Choose the events you want to receive email notifications for</p>
+                            <div class="space-y-4">
+                                <!-- Program Updates -->
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex flex-col pr-4">
+                                        <span class="text-sm font-bold text-gray-900">Program updates</span>
+                                        <span class="text-xs text-gray-500">Notifications about changes to your programs (status changes, hacker joined)</span>
+                                    </div>
+                                    <label class="toggle-wrapper relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" name="notif_program_updates" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green transition-colors duration-200"></div>
+                                    </label>
+                                </div>
+
+                                <!-- Submission Updates -->
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex flex-col pr-4">
+                                        <span class="text-sm font-bold text-gray-900">Submission updates</span>
+                                        <span class="text-xs text-gray-500">Notifications about new approved submissions for your programs</span>
+                                    </div>
+                                    <label class="toggle-wrapper relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" name="notif_submission_updates" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green transition-colors duration-200"></div>
+                                    </label>
+                                </div>
+
+                                <!-- Chat Notifications -->
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex flex-col pr-4">
+                                        <span class="text-sm font-bold text-gray-900">Chat notifications</span>
+                                        <span class="text-xs text-gray-500">Notifications about new direct messages</span>
+                                    </div>
+                                    <label class="toggle-wrapper relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" name="notif_chat_notifications" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green transition-colors duration-200"></div>
+                                    </label>
+                                </div>
+
+                                <!-- Email Digest -->
+                                <div class="flex items-center justify-between py-3">
+                                    <div class="flex flex-col pr-4">
+                                        <span class="text-sm font-bold text-gray-900">Email digest</span>
+                                        <span class="text-xs text-gray-500">Bundle notifications into a digest sent every 12 hours instead of immediately</span>
+                                    </div>
+                                    <label class="toggle-wrapper relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" name="notif_email_digest" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green transition-colors duration-200"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Newsletter Section (Card 2) -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 h-fit">
+                            <h3 class="text-lg font-bold text-brand-blue mb-4">Newsletter</h3>
+                            <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                                <div class="flex flex-col pr-4">
+                                    <span class="text-sm font-bold text-gray-900">Newsletter subscription</span>
+                                    <span class="text-xs text-gray-500">Receive newsletters about platform updates and new features</span>
+                                </div>
+                                <label class="toggle-wrapper relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" name="notif_newsletter" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green transition-colors duration-200"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TAB 4: Signed Agreements -->
+                <div id="content-agreements" class="tab-content hidden animate-fadeIn">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+                        <h3 class="text-lg font-bold text-brand-blue border-b border-gray-100 pb-2 mb-6">Signed agreements</h3>
+                        
+                        <div class="space-y-8">
+                            <!-- Program Group 1 -->
+                            <div>
+                                <h4 class="text-lg font-bold text-brand-blue mb-4 flex items-center">
+                                    Program name
+                                </h4>
+                                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                                    <div class="divide-y divide-gray-100">
+                                        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                                            <div class="flex items-center space-x-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">Main contract</p>
+                                                    <p class="text-xs text-gray-500">Signed on 2023/01/15</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                </svg>
+                                                <button class="flex items-center text-sm text-brand-blue hover:text-blue-800 font-medium transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                    </svg>
+                                                    Download
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                                            <div class="flex items-center space-x-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">Addendum</p>
+                                                    <p class="text-xs text-gray-500">Signed on 2023/06/20</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                </svg>
+                                                <button class="flex items-center text-sm text-brand-blue hover:text-blue-800 font-medium transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                    </svg>
+                                                    Download
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                                            <div class="flex items-center space-x-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">Addendum</p>
+                                                    <p class="text-xs text-gray-500">Signed on 2023/09/05</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                </svg>
+                                                <button class="flex items-center text-sm text-brand-blue hover:text-blue-800 font-medium transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                    </svg>
+                                                    Download
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Program Group 2 -->
+                            <div>
+                                <h4 class="text-lg font-bold text-brand-blue mb-4 flex items-center">
+                                    Program name
+                                </h4>
+                                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                                    <div class="divide-y divide-gray-100">
+                                        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                                            <div class="flex items-center space-x-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">Main contract</p>
+                                                    <p class="text-xs text-gray-500">Signed on 2023/07/12</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                </svg>
+                                                <button class="flex items-center text-sm text-brand-blue hover:text-blue-800 font-medium transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                    </svg>
+                                                    Download
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Program Group 3 -->
+                            <div>
+                                <h4 class="text-lg font-bold text-brand-blue mb-4 flex items-center">
+                                    Program name
+                                </h4>
+                                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                                    <div class="divide-y divide-gray-100">
+                                        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                                            <div class="flex items-center space-x-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">Main contract</p>
+                                                    <p class="text-xs text-gray-500">Signed on 2022/11/10</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                </svg>
+                                                <button class="flex items-center text-sm text-brand-blue hover:text-blue-800 font-medium transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                    </svg>
+                                                    Download
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Global Save Action -->
+                <div class="mt-6 flex justify-end">
+                    <button type="submit" class="w-full sm:w-auto text-center bg-brand-green hover:bg-brand-green-dark text-white py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 font-normal">
+                        Save changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Password Change Modal -->
+    <div id="password-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity opacity-0 modal-backdrop"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md opacity-0 scale-95 modal-panel">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold leading-6 text-brand-blue" id="modal-title">Change password</h3>
+                            <button type="button" class="close-modal text-gray-400 hover:text-gray-500 focus:outline-none">
+                                <span class="sr-only">Close</span>
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6">
+                        <form id="password-form" class="space-y-4">
+                            <div>
+                                <label for="old-password">Old password</label>
+                                <input type="password" id="old-password" name="old-password" class="form-control" placeholder="••••••••" required>
+                            </div>
+                            <div>
+                                <label for="new-password">New password</label>
+                                <input type="password" id="new-password" name="new-password" class="form-control" placeholder="••••••••" required>
+                            </div>
+                            <div>
+                                <label for="repeat-password">Repeat new password</label>
+                                <input type="password" id="repeat-password" name="repeat-password" class="form-control" placeholder="••••••••" required>
+                            </div>
+                            <div class="flex justify-center mt-4">
+                                <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button type="button" id="save-password-btn" class="inline-flex w-full justify-center rounded-lg bg-brand-green px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-green-dark sm:ml-3 sm:w-auto transition-colors">Change password</button>
+                        <button type="button" class="close-modal mt-3 w-full md:w-auto bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 py-2 px-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 ease-in-out sm:mt-0 text-sm font-medium">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Drag and Drop Logic ---
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('logo-upload');
+            const profilePreview = document.getElementById('profile-preview');
+            const dragOverlay = document.getElementById('drag-overlay');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.add('drag-over');
+                    dragOverlay.classList.remove('opacity-0');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.remove('drag-over');
+                    dragOverlay.classList.add('opacity-0');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', handleDrop, false);
+            fileInput.addEventListener('change', handleFiles, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    handleFiles({ target: { files: files } });
+                }
+            }
+
+            function handleFiles(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profilePreview.src = e.target.result;
+                        profilePreview.classList.remove('grayscale');
+                    }
+                    reader.readAsDataURL(file);
+                } else if (file) {
+                    alert('Please upload a valid image file (JPG, PNG, GIF).');
+                }
+            }
+
+            // --- Form Submit Action ---
+            const form = document.getElementById('profile-form');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const btn = form.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
+                btn.textContent = 'Saved!';
+                btn.classList.add('bg-green-700');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('bg-green-700');
+                }, 2000);
+            });
+
+            // --- Generic Modal Logic ---
+            function setupModal(modalId, triggerId) {
+                const modal = document.getElementById(modalId);
+                const triggerBtn = document.getElementById(triggerId);
+                const closeBtns = modal.querySelectorAll('.close-modal');
+                const backdrop = modal.querySelector('.modal-backdrop');
+                const panel = modal.querySelector('.modal-panel');
+
+                if (!modal || !triggerBtn) return;
+
+                function openModal() {
+                    modal.classList.remove('hidden');
+                    document.body.classList.add('modal-active');
+                    setTimeout(() => {
+                        backdrop.classList.remove('opacity-0');
+                        panel.classList.remove('opacity-0', 'scale-95');
+                        panel.classList.add('opacity-100', 'scale-100');
+                    }, 10);
+                }
+
+                function closeModal() {
+                    backdrop.classList.remove('opacity-100');
+                    panel.classList.remove('opacity-100', 'scale-100');
+                    panel.classList.add('opacity-0', 'scale-95');
+                    
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        document.body.classList.remove('modal-active');
+                        const form = modal.querySelector('form');
+                        if (form) form.reset();
+                    }, 300);
+                }
+
+                triggerBtn.addEventListener('click', openModal);
+
+                closeBtns.forEach(btn => {
+                    btn.addEventListener('click', closeModal);
+                });
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target.closest('.modal-panel') === null) {
+                        closeModal();
+                    }
+                });
+                
+                return { openModal, closeModal };
+            }
+
+            const passwordModalControls = setupModal('password-modal', 'open-password-modal');
+
+            // --- Password Save Logic ---
+            const saveBtn = document.getElementById('save-password-btn');
+            
+            saveBtn.addEventListener('click', () => {
+                const oldPass = document.getElementById('old-password').value;
+                const newPass = document.getElementById('new-password').value;
+                const repeatPass = document.getElementById('repeat-password').value;
+
+                if (!oldPass || !newPass || !repeatPass) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                if (newPass !== repeatPass) {
+                    alert('New passwords do not match');
+                    return;
+                }
+
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = 'Changing...';
+                saveBtn.disabled = true;
+
+                setTimeout(() => {
+                    saveBtn.textContent = 'Password Changed!';
+                    saveBtn.classList.remove('bg-brand-green', 'hover:bg-brand-green-dark');
+                    saveBtn.classList.add('bg-green-700');
+                    
+                    setTimeout(() => {
+                        if (passwordModalControls) passwordModalControls.closeModal();
+                        setTimeout(() => {
+                            saveBtn.textContent = originalText;
+                            saveBtn.classList.add('bg-brand-green', 'hover:bg-brand-green-dark');
+                            saveBtn.classList.remove('bg-green-700');
+                            saveBtn.disabled = false;
+                        }, 300);
+                    }, 1000);
+                }, 800);
+            });
+        });
+    </script>
+</body>
+</html>
