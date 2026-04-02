@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <link rel="icon" href="b4b_logo.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font */
+        body {
+            font-family: 'DM Sans', sans-serif;
+        }
+        /* Custom styles for active filter button */
+        .filter-btn-active {
+            background-color: #41cc06 !important;
+            color: white !important;
+            border-color: #41cc06 !important;
+        }
+        /* Sidebar transition for mobile */
+        #sidebar-container {
+            transition: transform 0.3s ease-in-out;
+        }
+        /* Custom style for active nav link */
+        .nav-link-active > a {
+            background-color: #f0fdf4; /* activity-green-bg */
+        }
+         .nav-link-active > a span {
+             font-weight: 700;
+        }
+         #dashboard-nav-item.nav-link-active > a svg {
+            color: #41cc06 !important; /* activity-green-text, use important to override base style */
+        }
+        a.sub-nav-link-active {
+            background-color: #f0fdf4;
+            font-weight: 700;
+        }
+        #chat-widget {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        /* Fix for logo distortion */
+        .logo-img {
+            object-fit: contain;
+        }
+        /* Custom style for the dropdown arrow */
+        .custom-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2341cc06' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .sort-btn-active {
+            background-color: #eafce2; /* brand-green-light */
+            color: #41cc06; /* brand-green */
+        }
+
+    </style>
+    <script>
+        // Custom Tailwind CSS configuration
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue': '#031987',
+                        'brand-green': '#41cc06',
+                        'brand-green-light': '#eafce2',
+                        'brand-green-border': '#86efac',
+                        'activity-green-bg': '#f0fdf4', /* bg-green-50 */
+                        'activity-green-text': '#41cc06', /* custom accent green */
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white">
+
+    <div class="flex flex-col h-screen">
+        <!-- Full-width Header -->
+        <header class="flex h-20 w-full shrink-0 items-center border-b bg-white z-10">
+            <!-- Logo Area and Mobile Toggle -->
+            <div class="flex h-full w-auto items-center justify-start pl-4 lg:w-64 lg:justify-center lg:pl-0">
+                <!-- Mobile Sidebar Toggle -->
+                <button id="sidebar-toggle" class="mr-4 text-gray-500 focus:outline-none lg:hidden">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6H20M4 12H20M4 18H11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <!-- Logo -->
+                <a href="#">
+                    <img src="b4b_logo.svg" alt="Logo" class="h-10" onerror="this.onerror=null;this.src='https://placehold.co/150x40/031987/ffffff?text=LOGO';">
+                </a>
+            </div>
+
+            <!-- User Menu Area -->
+            <div class="flex-1 flex items-center justify-end h-full px-8 sm:px-12 lg:px-16">
+                <div class="flex items-center space-x-8">
+                    <div class="relative">
+                        <button id="profile-menu-btn" class="flex items-center space-x-2 text-sm text-gray-700 hover:text-brand-blue">
+                            <img src="profile_image.svg" alt="Profile Image" class="w-8 h-8 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/32x32/cccccc/000000?text=H';">
+                            <span class="hidden sm:inline">HCKR</span>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div id="profile-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                            <a href="#" class="block px-4 py-2 text-sm text-brand-blue hover:bg-gray-100">Profile settings</a>
+                        </div>
+                    </div>
+                    <button class="flex items-center space-x-2 text-sm text-gray-500 hover:text-red-600">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Log out</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main area below header -->
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Sidebar -->
+            <aside id="sidebar-container" class="w-64 bg-white flex-shrink-0 flex-col border-r absolute lg:relative inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 z-20 lg:flex">
+                <nav class="p-4 space-y-2 mt-2">
+                    <div id="dashboard-nav-item" class="relative nav-link-active">
+                        <a href="#" id="dashboard-link" class="flex items-center space-x-3 px-3 py-2 text-sm rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                            </svg>
+                            <span class="text-green-700 font-bold">Dashboard</span>
+                        </a>
+                    </div>
+
+                    <div class="space-y-1 pt-2">
+                         <div class="relative">
+                            <a href="#" id="public-bounties-link" class="flex items-center space-x-3 px-3 py-2 text-sm rounded-lg text-brand-blue hover:bg-gray-100">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Public bug bounties</span>
+                            </a>
+                            <span title="5 new programs" class="absolute top-2 right-2 bg-brand-blue text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">5</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-1 pt-2">
+                         <div class="flex items-center space-x-3 px-3 py-2 text-sm text-brand-blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                              <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                            </svg>
+                            <span>Quick links</span>
+                        </div>
+                        <div class="ml-8 space-y-1">
+                            <a href="#" id="my-bounties-link" class="nav-link block px-3 py-2 text-sm text-brand-blue hover:bg-gray-100 rounded-lg">My bug bounties</a>
+                            <a href="#" id="assigned-pen-tests-link" class="nav-link block px-3 py-2 text-sm text-brand-blue hover:bg-gray-100 rounded-lg">Assigned penetration tests</a>
+                            <a href="#" id="bookmarks-link" class="nav-link block px-3 py-2 text-sm text-brand-blue hover:bg-gray-100 rounded-lg">Favourite programs</a>
+                        </div>
+                    </div>
+                </nav>
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="flex-1 overflow-y-auto bg-white">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="view mx-auto px-8 pb-8 pt-4 sm:px-12 sm:pb-12 sm:pt-6 lg:px-16 lg:pb-16 lg:pt-8">
+                    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold text-brand-blue">Dashboard</h1>
+                        </div>
+                    </header>
+                    
+                    <!-- Statistics Widget -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <!-- Reputation -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6">
+                            <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm text-gray-500">Reputation</p>
+                                <p class="text-2xl font-bold text-brand-blue break-words">1 250</p>
+                            </div>
+                        </div>
+                        <!-- Reports Submitted -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6">
+                            <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                     <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm text-gray-500">Reports submitted</p>
+                                <p class="text-2xl font-bold text-brand-blue break-words">2 677</p>
+                            </div>
+                        </div>
+                        <!-- Bounties Paid -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6">
+                            <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm text-gray-500">Bounties paid</p>
+                                <p class="text-2xl font-bold text-brand-blue break-words">150 200 €</p>
+                            </div>
+                        </div>
+                        <!-- My Active Programs -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center gap-6">
+                            <div class="bg-brand-green-light p-3 rounded-full flex-shrink-0">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm text-gray-500">My active programs</p>
+                                <p class="text-2xl font-bold text-brand-blue break-words">10</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="border-t border-gray-200 my-8"></div>
+
+                    <!-- My Programs Subheading -->
+                    <h2 class="text-2xl font-bold text-brand-blue mb-6">My programs</h2>
+
+                    <!-- Filters Section -->
+                    <div class="mb-8">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="all-filter-btn" class="text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out filter-btn-active">All</button>
+                            
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            
+                            <button data-status-filter="active" class="status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Active</button>
+                            <button data-status-filter="reports-submitted" class="status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Reports submitted</button>
+                            <button data-status-filter="pending-invitation" class="status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Pending invitation</button>
+                            <button data-status-filter="closed" class="status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Closed</button>
+                            
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+
+                            <button data-type-filter="bug-bounty" class="type-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Bug bounty</button>
+                            <button data-type-filter="pen-test" class="type-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Penetration test</button>
+                            
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            
+                            <button data-visibility-filter="public" class="visibility-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Public</button>
+                            <button data-visibility-filter="private" class="visibility-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Private</button>
+                            
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+
+                            <button data-special-filter="bookmarked" class="special-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Favourite programs</button>
+                       
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+
+                            <button data-special-filter="unread-messages" class="special-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Unread messages</button>
+                        </div>
+                    </div>
+
+                    <!-- Program Widgets Grid -->
+                    <div id="program-widgets" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- PEN TEST WIDGET 1 -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col" data-type="pen-test" data-status="active" data-visibility="private">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="CyberSec Solutions International Group">CyberSec Solutions International Group</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">Web application security with a very long name that might wrap</h3>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <span class="text-sm text-gray-500">Contract value</span>
+                                    <div class="font-bold text-lg">25 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Button -->
+                            <div class="p-4 border-t border-gray-100 mt-auto">
+                                <p class="text-xs text-gray-500 mb-4 text-center">Draft report on: 2024/01/15</p>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- BUG BOUNTY WIDGET 1 (Widget #2) -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col bug-bounty-widget" data-type="bug-bounty" data-status="active" data-visibility="public" data-launch-date="2024/01/15" data-hackers="1204" data-reports="345" data-avg-bounty="850" data-triage-time="72">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="CyberSec Solutions International Group">CyberSec Solutions International Group</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">Web application security</h3>
+                                    <p class="text-xs text-gray-500 mb-4">Launched on: 2024/01/15</p>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <div class="font-bold text-lg">100 € - 5 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Stats & Details Button -->
+                            <div class="p-4 border-t border-gray-100">
+                                <div class="grid grid-cols-4 gap-2 text-center mb-4">
+                                    <div title="Participating hackers">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">1 204</div>
+                                    </div>
+                                    <div title="Submitted reports">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        <div class="text-gray-800 text-sm">345</div>
+                                    </div>
+                                    <div title="Average bounty">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <div class="text-gray-800 text-sm">850 €</div>
+                                    </div>
+                                    <div title="Median time to bounty">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">72h</div>
+                                    </div>
+                                </div>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PEN TEST WIDGET 2 -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col" data-type="pen-test" data-status="reports-submitted" data-visibility="private">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="SecureCloud">SecureCloud</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                     <div title="Report submitted">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <button class="favorite-btn text-red-500" aria-label="Remove from favorites" title="Remove from favourites">
+                                        <svg class="w-6 h-6" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">API endpoint security</h3>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <span class="text-sm text-gray-500">Contract value</span>
+                                    <div class="font-bold text-lg">50 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Button -->
+                            <div class="p-4 border-t border-gray-100 mt-auto">
+                                <p class="text-xs text-gray-500 mb-4 text-center">Draft report on: 2024/03/01</p>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- BUG BOUNTY WIDGET 2 -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col bug-bounty-widget" data-type="bug-bounty" data-status="reports-submitted" data-visibility="public" data-launch-date="2024/03/01" data-hackers="2510" data-reports="812" data-avg-bounty="1500" data-triage-time="48" data-unread="true">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="SecureCloud">SecureCloud</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div title="Report submitted" class="relative">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+                                    </div>
+                                    <button class="favorite-btn text-red-500" aria-label="Remove from favorites" title="Remove from favourites">
+                                        <svg class="w-6 h-6" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">API endpoint security</h3>
+                                    <p class="text-xs text-gray-500 mb-4">Launched on: 2024/03/01</p>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <div class="font-bold text-lg">250 € - 10 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Stats & Details Button -->
+                            <div class="p-4 border-t border-gray-100">
+                                 <div class="grid grid-cols-4 gap-2 text-center mb-4">
+                                    <div title="Participating hackers">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">2 510</div>
+                                    </div>
+                                    <div title="Submitted reports">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        <div class="text-gray-800 text-sm">812</div>
+                                    </div>
+                                    <div title="Average bounty">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <div class="text-gray-800 text-sm">1 500 €</div>
+                                    </div>
+                                    <div title="Median time to bounty">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">48h</div>
+                                    </div>
+                                </div>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- PEN TEST WIDGET 3 -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col" data-type="pen-test" data-status="active" data-visibility="private">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="Appify">Appify</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">Mobile app (iOS)</h3>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <span class="text-sm text-gray-500">Contract value</span>
+                                    <div class="font-bold text-lg">15 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Button -->
+                            <div class="p-4 border-t border-gray-100 mt-auto">
+                                <p class="text-xs text-gray-500 mb-4 text-center">Draft report on: 2024/05/20</p>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- BUG BOUNTY WIDGET 3 (Widget #6) -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col bug-bounty-widget" data-type="bug-bounty" data-status="active" data-visibility="public" data-launch-date="2024/05/20" data-hackers="850" data-reports="150" data-avg-bounty="400" data-triage-time="96">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="Appify">Appify</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">Mobile app (iOS)</h3>
+                                    <p class="text-xs text-gray-500 mb-4">Launched on: 2024/05/20</p>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <div class="font-bold text-lg">50 € - 2 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Stats & Details Button -->
+                            <div class="p-4 border-t border-gray-100">
+                                <div class="grid grid-cols-4 gap-2 text-center mb-4">
+                                    <div title="Participating hackers">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">850</div>
+                                    </div>
+                                    <div title="Submitted reports">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        <div class="text-gray-800 text-sm">150</div>
+                                    </div>
+                                    <div title="Average bounty">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <div class="text-gray-800 text-sm">400 €</div>
+                                    </div>
+                                    <div title="Median time to bounty">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">96h</div>
+                                    </div>
+                                </div>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PEN TEST WIDGET 4 -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col" data-type="pen-test" data-status="scope-accepted" data-visibility="private">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="DataCorp">DataCorp</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">Cloud infrastructure</h3>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <span class="text-sm text-gray-500">Contract value</span>
+                                    <div class="font-bold text-lg">75 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Button -->
+                            <div class="p-4 border-t border-gray-100 mt-auto">
+                                <p class="text-xs text-gray-500 mb-4 text-center">Draft report on: 2024/02/10</p>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- BUG BOUNTY WIDGET 4 (Widget #8) -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col bug-bounty-widget" data-type="bug-bounty" data-status="closed" data-visibility="private" data-launch-date="2024/02/10" data-hackers="3100" data-reports="950" data-avg-bounty="2100" data-triage-time="24">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="DataCorp">DataCorp</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">Closed program review</h3>
+                                    <p class="text-xs text-gray-500 mb-4">Launched on: 2024/02/10</p>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <div class="font-bold text-lg">500 € - 15 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Stats & Details Button -->
+                            <div class="p-4 border-t border-gray-100">
+                                <div class="grid grid-cols-4 gap-2 text-center mb-4">
+                                    <div title="Participating hackers">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">3 100</div>
+                                    </div>
+                                    <div title="Submitted reports">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        <div class="text-gray-800 text-sm">950</div>
+                                    </div>
+                                    <div title="Average bounty">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <div class="text-gray-800 text-sm">2 100 €</div>
+                                    </div>
+                                    <div title="Median time to bounty">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">24h</div>
+                                    </div>
+                                </div>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PEN TEST WIDGET 5 (Widget #9) -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col" data-type="pen-test" data-status="active" data-visibility="private">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="FinTech Solutions">FinTech Solutions</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">API pen test</h3>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <span class="text-sm text-gray-500">Contract value</span>
+                                    <div class="font-bold text-lg">40 000 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Button -->
+                            <div class="p-4 border-t border-gray-100 mt-auto">
+                                <p class="text-xs text-gray-500 mb-4 text-center">Draft report on: 2024/06/01</p>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- BUG BOUNTY WIDGET 5 -->
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col bug-bounty-widget" data-type="bug-bounty" data-status="active" data-visibility="public" data-launch-date="2024/06/01" data-hackers="1800" data-reports="420" data-avg-bounty="1200" data-triage-time="36">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-start border-b border-gray-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img src="" alt="Company Logo" class="w-10 h-10 rounded-full flex-shrink-0 grayscale logo-img">
+                                    <span class="font-semibold text-gray-800 truncate" title="FinTech Solutions">FinTech Solutions</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="favorite-btn text-gray-400 hover:text-red-500 transition-colors" aria-label="Add to favorites" title="Add to favourites">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Body -->
+                            <div class="p-4 flex-grow flex flex-col">
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg text-brand-blue">Payment gateway</h3>
+                                    <p class="text-xs text-gray-500 mb-4">Launched on: 2024/06/01</p>
+                                </div>
+                                <div class="bg-white border border-gray-200 text-brand-blue rounded-lg p-3 text-center mb-4">
+                                    <div class="font-bold text-lg">300 € - 7 500 €</div>
+                                </div>
+                            </div>
+                            <!-- Footer Stats & Details Button -->
+                            <div class="p-4 border-t border-gray-100">
+                                <div class="grid grid-cols-4 gap-2 text-center mb-4">
+                                    <div title="Participating hackers">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">1 800</div>
+                                    </div>
+                                    <div title="Submitted reports">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        <div class="text-gray-800 text-sm">420</div>
+                                    </div>
+                                    <div title="Average bounty">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <div class="text-gray-800 text-sm">1 200 €</div>
+                                    </div>
+                                    <div title="Median time to bounty">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <div class="text-gray-800 text-sm">36h</div>
+                                    </div>
+                                </div>
+                                <button class="details-btn w-full bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-brand-green hover:text-white transition-all duration-200">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Public Bug Bounties View -->
+                <div id="public-bug-bounties-view" class="view hidden mx-auto px-8 pb-8 pt-4 sm:px-12 sm:pb-12 sm:pt-6 lg:px-16 lg:pb-16 lg:pt-8">
+                     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                        <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4 sm:mb-0">Public bug bounties</h1>
+                    </header>
+                     <!-- Filters Section -->
+                    <div class="mb-8">
+                        <div class="flex flex-col items-start gap-4">
+                            <!-- Filter Buttons Row -->
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button id="pbb-all-filter-btn" class="text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out filter-btn-active">All</button>
+                                <div class="border-l border-gray-300 h-6 mx-2"></div>
+                                <button data-status-filter="active" class="pbb-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Active</button>
+                                <button data-status-filter="closed" class="pbb-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Closed</button>
+                                <div class="border-l border-gray-300 h-6 mx-2"></div>
+                                <button data-special-filter="my-bounties" class="pbb-special-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">My bug bounties</button>
+                                <div class="border-l border-gray-300 h-6 mx-2"></div>
+                                <button data-special-filter="bookmarked" class="pbb-special-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Favourite programs</button>
+                            </div>
+                            <!-- Group By Row -->
+                            <div class="flex items-center gap-2">
+                                <label for="group-by-select" class="text-sm font-medium text-gray-500 whitespace-nowrap">Group by:</label>
+                                <select id="group-by-select" class="custom-select w-full sm:w-auto text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm focus:border-brand-green focus:ring-brand-green transition-all duration-300 ease-in-out truncate">
+                                    <option value="launch-date">Launch date</option>
+                                    <option value="hackers">Participating hackers</option>
+                                    <option value="reports">Reports submitted</option>
+                                    <option value="avg-bounty">Average bounty</option>
+                                    <option value="triage-time">Median time to bounty</option>
+                                </select>
+                                <div class="flex items-center rounded-lg shadow-sm border border-brand-green overflow-hidden">
+                                     <button id="sort-desc-btn" class="p-2 text-gray-400 border-r border-brand-green hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                    </button>
+                                    <button id="sort-asc-btn" class="p-2 text-gray-400 hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="public-bounties-widgets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- Public bug bounty widgets will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- My Bug Bounties View -->
+                <div id="my-bug-bounties-view" class="view hidden mx-auto px-8 pb-8 pt-4 sm:px-12 sm:pb-12 sm:pt-6 lg:px-16 lg:pb-16 lg:pt-8">
+                    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                        <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4 sm:mb-0">My bug bounties</h1>
+                    </header>
+                     <!-- Filters Section -->
+                    <div class="mb-8">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="mbb-all-filter-btn" class="text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out filter-btn-active">All</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-status-filter="active" class="mbb-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Active</button>
+                            <button data-status-filter="reports-submitted" class="mbb-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Reports submitted</button>
+                            <button data-status-filter="closed" class="mbb-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Closed</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-visibility-filter="public" class="mbb-visibility-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Public</button>
+                            <button data-visibility-filter="private" class="mbb-visibility-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Private</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-special-filter="bookmarked" class="mbb-special-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Favourite programs</button>
+                        </div>
+                        <!-- Group By Row -->
+                        <div class="mt-4 flex items-center gap-2">
+                            <label for="mbb-group-by-select" class="text-sm font-medium text-gray-500 whitespace-nowrap">Group by:</label>
+                            <select id="mbb-group-by-select" class="custom-select w-full sm:w-auto text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm focus:border-brand-green focus:ring-brand-green transition-all duration-300 ease-in-out truncate">
+                                <option value="launch-date">Launch date</option>
+                                <option value="hackers">Participating hackers</option>
+                                <option value="reports">Reports submitted</option>
+                                <option value="avg-bounty">Average bounty</option>
+                                <option value="triage-time">Median time to bounty</option>
+                            </select>
+                            <div class="flex items-center rounded-lg shadow-sm border border-brand-green overflow-hidden">
+                                <button id="mbb-sort-desc-btn" class="p-2 text-gray-400 border-r border-brand-green hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                </button>
+                                <button id="mbb-sort-asc-btn" class="p-2 text-gray-400 hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Widgets Grid -->
+                    <div id="my-bounty-widgets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- My Bug Bounty widgets will be cloned here -->
+                    </div>
+                </div>
+
+                <!-- Assigned Pen Tests View -->
+                <div id="assigned-pen-tests-view" class="view hidden mx-auto px-8 pb-8 pt-4 sm:px-12 sm:pb-12 sm:pt-6 lg:px-16 lg:pb-16 lg:pt-8">
+                    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                        <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4 sm:mb-0">Assigned penetration tests</h1>
+                    </header>
+                     <!-- Filters Section -->
+                    <div class="mb-8">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="apt-all-filter-btn" class="text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out filter-btn-active">All</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-status-filter="active" class="apt-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Active</button>
+                            <button data-status-filter="reports-submitted" class="apt-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Reports submitted</button>
+                            <button data-status-filter="closed" class="apt-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Closed</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-special-filter="bookmarked" class="apt-special-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Favourite programs</button>
+                        </div>
+                        <!-- Group By Row -->
+                        <div class="mt-4 flex flex-wrap items-center gap-2">
+                            <label for="apt-group-by-select" class="text-sm font-medium text-gray-500 whitespace-nowrap">Group by:</label>
+                            <select id="apt-group-by-select" class="custom-select w-52 text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm focus:border-brand-green focus:ring-brand-green transition-all duration-300 ease-in-out">
+                                <option value="draft-report-date">Draft report date</option>
+                                <option value="contract-value">Contract value</option>
+                            </select>
+                            <div class="flex items-center rounded-lg shadow-sm border border-brand-green overflow-hidden">
+                                <button id="apt-sort-desc-btn" class="p-2 text-gray-400 border-r border-brand-green hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                </button>
+                                <button id="apt-sort-asc-btn" class="p-2 text-gray-400 hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Widgets Grid -->
+                    <div id="assigned-pen-tests-widgets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- Assigned Pen Test widgets will be cloned here -->
+                    </div>
+                </div>
+
+                <!-- Bookmarks View -->
+                <div id="bookmarks-view" class="view hidden mx-auto px-8 pb-8 pt-4 sm:px-12 sm:pb-12 sm:pt-6 lg:px-16 lg:pb-16 lg:pt-8">
+                    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                        <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4 sm:mb-0">Favourite programs</h1>
+                    </header>
+                    <!-- Filters Section -->
+                    <div class="mb-8">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="bookmarks-all-filter-btn" class="text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out filter-btn-active">All</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-status-filter="active" class="bookmarks-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Active</button>
+                            <button data-status-filter="reports-submitted" class="bookmarks-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Reports submitted</button>
+                            <button data-status-filter="pending-invitation" class="bookmarks-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Pending invitation</button>
+                            <button data-status-filter="closed" class="bookmarks-status-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Closed</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-type-filter="pen-test" class="bookmarks-type-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Penetration test</button>
+                            <button data-type-filter="bug-bounty" class="bookmarks-type-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Bug bounty</button>
+                            <div class="border-l border-gray-300 h-6 mx-2"></div>
+                            <button data-visibility-filter="public" class="bookmarks-visibility-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Public</button>
+                            <button data-visibility-filter="private" class="bookmarks-visibility-filter-btn text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out">Private</button>
+                        </div>
+                         <!-- Group By Row -->
+                        <div class="mt-4 flex items-center gap-2">
+                            <label for="bookmarks-group-by-select" class="text-sm font-medium text-gray-500 whitespace-nowrap">Group by:</label>
+                            <select id="bookmarks-group-by-select" class="custom-select w-full sm:w-auto text-sm bg-white text-brand-green py-2 px-4 rounded-lg border border-brand-green hover:bg-green-50 shadow-sm focus:border-brand-green focus:ring-brand-green transition-all duration-300 ease-in-out truncate">
+                                <option value="launch-date">Launch date</option>
+                                <option value="hackers">Participating hackers</option>
+                                <option value="reports">Reports submitted</option>
+                                <option value="avg-bounty">Average bounty / value</option>
+                                <option value="triage-time">Median time to bounty</option>
+                            </select>
+                            <div class="flex items-center rounded-lg shadow-sm border border-brand-green overflow-hidden">
+                                 <button id="bookmarks-sort-desc-btn" class="p-2 text-gray-400 border-r border-brand-green hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                </button>
+                                <button id="bookmarks-sort-asc-btn" class="p-2 text-gray-400 hover:bg-brand-green-light hover:text-brand-green transition-colors">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Widgets Grid -->
+                    <div id="bookmarks-widgets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- Bookmarked widgets will be cloned here -->
+                    </div>
+                </div>
+
+                <div id="bug-bounties-view" class="view hidden mx-auto px-8 pb-8 pt-4 sm:px-12 sm:pb-12 sm:pt-6 lg:px-16 lg:pb-16 lg:pt-8">
+                     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                        <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4 sm:mb-0">Active bug bounties</h1>
+                    </header>
+                    <div id="bug-bounty-widgets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- Bug bounty widgets will be inserted here -->
+                    </div>
+                </div>
+
+                <div id="pen-tests-view" class="view hidden mx-auto px-8 pb-8 pt-4 sm:px-12 sm:pb-12 sm:pt-6 lg:px-16 lg:pb-16 lg:pt-8">
+                     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                        <h1 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4 sm:mb-0">Active penetration tests</h1>
+                    </header>
+                    <div id="pen-tests-widgets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- Pen test widgets will be inserted here -->
+                    </div>
+                </div>
+                <!-- This view will now host the iframe for the program review -->
+                <div id="program-review-view" class="view hidden">
+                    <!-- Program Review iframe will be inserted here by JS -->
+                </div>
+                 <div id="pentest-review-view" class="view hidden">
+                    <!-- Pentest Review iframe will be inserted here by JS -->
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Randomize Logos ---
+            const logos = ['Melp.svg', 'VilniusTech.svg', 'TeraSky.svg', 'EcomWall.png', 'Cyberupgrade.svg', 'cto2b.png', 'Argyle.svg'];
+            const logoImages = document.querySelectorAll('#program-widgets .logo-img');
+            logoImages.forEach(img => {
+                const randomIndex = Math.floor(Math.random() * logos.length);
+                img.src = logos[randomIndex];
+                 img.onerror = function() { this.src='https://placehold.co/40x40/f0f0f0/000000?text=LOGO'; };
+            });
+            
+            // --- View Switching ---
+            const allViews = document.querySelectorAll('.view');
+            const dashboardLink = document.getElementById('dashboard-link');
+            const publicBountiesLink = document.getElementById('public-bounties-link');
+            const myBountiesLink = document.getElementById('my-bounties-link');
+            const assignedPenTestsLink = document.getElementById('assigned-pen-tests-link');
+            const bookmarksLink = document.getElementById('bookmarks-link');
+            
+            const dashboardView = document.getElementById('dashboard-view');
+            const publicBugBountiesView = document.getElementById('public-bug-bounties-view');
+            const myBugBountiesView = document.getElementById('my-bug-bounties-view');
+            const assignedPenTestsView = document.getElementById('assigned-pen-tests-view');
+            const bookmarksView = document.getElementById('bookmarks-view');
+
+
+            function showView(viewToShow) {
+                allViews.forEach(view => view.classList.add('hidden'));
+                if(viewToShow) viewToShow.classList.remove('hidden');
+            }
+
+            function updateActiveNav(activeLink) {
+                 document.querySelectorAll('nav .nav-link-active').forEach(el => el.classList.remove('nav-link-active'));
+                 document.querySelectorAll('.ml-8 a').forEach(el => el.classList.remove('sub-nav-link-active'));
+
+                if(activeLink) {
+                     if (activeLink.id === 'dashboard-link' || activeLink.id === 'public-bounties-link') {
+                        activeLink.parentElement.classList.add('nav-link-active');
+                    } else {
+                        // For quick links, apply class directly to the <a> tag
+                        activeLink.classList.add('sub-nav-link-active');
+                    }
+                }
+            }
+            
+            dashboardLink.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                showView(dashboardView); 
+                updateActiveNav(dashboardLink); 
+            });
+
+            publicBountiesLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showView(publicBugBountiesView);
+                updateActiveNav(publicBountiesLink);
+                if (!publicBugBountiesView.dataset.initialized) {
+                    setupPublicBountiesView();
+                    publicBugBountiesView.dataset.initialized = true;
+                }
+            });
+
+            myBountiesLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showView(myBugBountiesView);
+                updateActiveNav(myBountiesLink);
+                if (!myBugBountiesView.dataset.initialized) {
+                    setupMyBountiesView();
+                    myBugBountiesView.dataset.initialized = true;
+                }
+            });
+
+            assignedPenTestsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showView(assignedPenTestsView);
+                updateActiveNav(assignedPenTestsLink);
+                if (!assignedPenTestsView.dataset.initialized) {
+                    setupAssignedPenTestsView();
+                    assignedPenTestsView.dataset.initialized = true;
+                }
+            });
+
+            bookmarksLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showView(bookmarksView);
+                updateActiveNav(bookmarksLink);
+                // Always refresh the bookmarks view when clicked
+                setupBookmarksView();
+                bookmarksView.dataset.initialized = true;
+            });
+
+            // --- Menu & Sidebar ---
+            const profileMenuBtn = document.getElementById('profile-menu-btn');
+            const profileMenu = document.getElementById('profile-menu');
+            profileMenuBtn.addEventListener('click', () => profileMenu.classList.toggle('hidden'));
+            document.addEventListener('click', (e) => { if (!profileMenuBtn.contains(e.target) && !profileMenu.contains(e.target)) profileMenu.classList.add('hidden'); });
+
+            const sidebarContainer = document.getElementById('sidebar-container');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            sidebarToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebarContainer.classList.toggle('-translate-x-full'); });
+            document.addEventListener('click', (e) => { if (!sidebarContainer.contains(e.target) && !sidebarToggle.contains(e.target)) sidebarContainer.classList.add('-translate-x-full'); });
+
+             // --- Global Helper Function for Sorting ---
+            function getSortableValue(widget, sortBy) {
+                switch (sortBy) {
+                    case 'launch-date': {
+                        if (widget.dataset.launchDate) {
+                            return new Date(widget.dataset.launchDate).getTime();
+                        }
+                        const dateText = widget.querySelector('.p-4.border-t p')?.textContent;
+                        if (dateText && dateText.includes('Draft report on:')) {
+                            const dateStr = dateText.replace('Draft report on:', '').trim();
+                            const date = new Date(dateStr);
+                            return isNaN(date) ? null : date.getTime();
+                        }
+                        return null;
+                    }
+                    case 'hackers': {
+                        const val = widget.dataset.hackers;
+                        return val ? parseInt(val.replace(/[ ,]/g, '')) : null;
+                    }
+                    case 'reports': {
+                        const val = widget.dataset.reports;
+                        return val ? parseInt(val.replace(/[ ,]/g, '')) : null;
+                    }
+                    case 'avg-bounty': {
+                        if (widget.dataset.avgBounty) {
+                            return parseInt(widget.dataset.avgBounty.replace(/€/g, ''));
+                        }
+                        const valueText = widget.querySelector('.font-bold.text-lg')?.textContent;
+                        if (valueText && valueText.startsWith('€')) {
+                            return parseInt(valueText.replace(/[^0-9]/g, ''));
+                        }
+                        return null;
+                    }
+                    case 'triage-time': {
+                        const val = widget.dataset.triageTime;
+                        return val ? parseInt(val.replace(/h/g, '')) : null;
+                    }
+                    default:
+                        return null;
+                }
+            }
+
+            // --- Dashboard Filter Logic ---
+            const allFilterBtn = document.getElementById('all-filter-btn');
+            const filterButtons = document.querySelectorAll('#dashboard-view .status-filter-btn, #dashboard-view .type-filter-btn, #dashboard-view .visibility-filter-btn, #dashboard-view .special-filter-btn');
+            const widgets = document.querySelectorAll('#program-widgets > div');
+
+            function filterDashboardWidgets() {
+                const activeStatusFilters = new Set([...document.querySelectorAll('#dashboard-view .status-filter-btn.filter-btn-active')].map(btn => btn.dataset.statusFilter));
+                const activeTypeFilters = new Set([...document.querySelectorAll('#dashboard-view .type-filter-btn.filter-btn-active')].map(btn => btn.dataset.typeFilter));
+                const activeVisibilityFilters = new Set([...document.querySelectorAll('#dashboard-view .visibility-filter-btn.filter-btn-active')].map(btn => btn.dataset.visibilityFilter));
+                const activeSpecialFilters = new Set([...document.querySelectorAll('#dashboard-view .special-filter-btn.filter-btn-active')].map(btn => btn.dataset.specialFilter));
+
+                widgets.forEach(widget => {
+                    const statusMatch = activeStatusFilters.size === 0 || activeStatusFilters.has(widget.dataset.status);
+                    const typeMatch = activeTypeFilters.size === 0 || activeTypeFilters.has(widget.dataset.type);
+                    const visibilityMatch = activeVisibilityFilters.size === 0 || activeVisibilityFilters.has(widget.dataset.visibility);
+                    
+                    let specialMatch = activeSpecialFilters.size === 0;
+                    if (!specialMatch) {
+                        let matches = false;
+                        if (activeSpecialFilters.has('bookmarked') && widget.querySelector('.favorite-btn.text-red-500') !== null) {
+                            matches = true;
+                        }
+                        if (activeSpecialFilters.has('unread-messages') && widget.dataset.unread === 'true') {
+                            matches = true;
+                        }
+                        specialMatch = matches;
+                    }
+
+                    widget.style.display = (statusMatch && typeMatch && visibilityMatch && specialMatch) ? 'flex' : 'none';
+                });
+            }
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    allFilterBtn.classList.remove('filter-btn-active');
+                    button.classList.toggle('filter-btn-active');
+                    if (![...filterButtons].some(btn => btn.classList.contains('filter-btn-active'))) {
+                        allFilterBtn.classList.add('filter-btn-active');
+                    }
+                    filterDashboardWidgets();
+                });
+            });
+
+            allFilterBtn.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('filter-btn-active'));
+                allFilterBtn.classList.add('filter-btn-active');
+                filterDashboardWidgets();
+            });
+
+            // --- Public Bug Bounties (PBB) View Logic ---
+            function setupPublicBountiesView() {
+                const grid = document.getElementById('public-bounties-widgets-grid');
+                const allPbbFilterBtn = document.getElementById('pbb-all-filter-btn');
+                const pbbFilterButtons = document.querySelectorAll('.pbb-status-filter-btn, .pbb-special-filter-btn');
+                const groupBySelect = document.getElementById('group-by-select');
+                
+                const sortDescBtn = document.getElementById('sort-desc-btn');
+                const sortAscBtn = document.getElementById('sort-asc-btn');
+                let sortDirection = 'desc'; // 'desc' or 'asc'
+
+                // 1. Clone only bug bounty widgets
+                const bountyWidgets = document.querySelectorAll('#program-widgets .bug-bounty-widget');
+                bountyWidgets.forEach(widget => {
+                    grid.appendChild(widget.cloneNode(true));
+                });
+                const pbbWidgets = grid.querySelectorAll('.bug-bounty-widget');
+
+                // 2. Filter logic for PBB view
+                function filterPbbWidgets() {
+                    const activeStatusFilters = new Set([...document.querySelectorAll('#public-bug-bounties-view .pbb-status-filter-btn.filter-btn-active')].map(btn => btn.dataset.statusFilter));
+                    const activeSpecialFilters = new Set([...document.querySelectorAll('#public-bug-bounties-view .pbb-special-filter-btn.filter-btn-active')].map(btn => btn.dataset.specialFilter));
+                    
+                    pbbWidgets.forEach(widget => {
+                        const statusMatch = activeStatusFilters.size === 0 || activeStatusFilters.has(widget.dataset.status);
+                        
+                        const isBookmarked = widget.querySelector('.favorite-btn.text-red-500') !== null;
+                        const specialMatch = activeSpecialFilters.size === 0 || ((activeSpecialFilters.has('my-bounties') || activeSpecialFilters.has('bookmarked')) && isBookmarked);
+
+                        widget.style.display = (statusMatch && specialMatch) ? 'flex' : 'none';
+                    });
+                }
+                
+                pbbFilterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        allPbbFilterBtn.classList.remove('filter-btn-active');
+                        button.classList.toggle('filter-btn-active');
+                        
+                        // If it's a status button, deselect other status buttons
+                        if (button.classList.contains('pbb-status-filter-btn')) {
+                            document.querySelectorAll('.pbb-status-filter-btn').forEach(btn => {
+                                if (btn !== button) btn.classList.remove('filter-btn-active');
+                            });
+                        }
+                        
+                        if (![...pbbFilterButtons].some(btn => btn.classList.contains('filter-btn-active'))) {
+                            allPbbFilterBtn.classList.add('filter-btn-active');
+                        }
+                        filterPbbWidgets();
+                    });
+                });
+
+                allPbbFilterBtn.addEventListener('click', () => {
+                    pbbFilterButtons.forEach(btn => btn.classList.remove('filter-btn-active'));
+                    allPbbFilterBtn.classList.add('filter-btn-active');
+                    filterPbbWidgets();
+                });
+                
+                // 3. Sorting logic for PBB
+                function sortPbbWidgets() {
+                    const sortBy = groupBySelect.value;
+                    const widgetsToSort = [...pbbWidgets];
+
+                    const sortedWidgets = widgetsToSort.sort((a, b) => {
+                        let valA, valB;
+                        switch(sortBy) {
+                            case 'launch-date':
+                                valA = new Date(a.dataset.launchDate);
+                                valB = new Date(b.dataset.launchDate);
+                                break;
+                            case 'hackers':
+                                valA = parseInt(a.dataset.hackers.replace(/,/g, ''));
+                                valB = parseInt(b.dataset.hackers.replace(/,/g, ''));
+                                break;
+                            case 'reports':
+                                valA = parseInt(a.dataset.reports.replace(/,/g, ''));
+                                valB = parseInt(b.dataset.reports.replace(/,/g, ''));
+                                break;
+                            case 'avg-bounty':
+                                valA = parseInt(a.dataset.avgBounty.replace(/€/g, ''));
+                                valB = parseInt(b.dataset.avgBounty.replace(/€/g, ''));
+                                break;
+                            case 'triage-time':
+                                valA = parseInt(a.dataset.triageTime.replace(/h/g, ''));
+                                valB = parseInt(b.dataset.triageTime.replace(/h/g, ''));
+                                break;
+                            default:
+                                return 0;
+                        }
+
+                        if (isNaN(valA) || isNaN(valB)) return 0;
+
+                        return sortDirection === 'desc' ? valB - valA : valA - valB;
+                    });
+                    
+                    grid.innerHTML = '';
+                    sortedWidgets.forEach(widget => grid.appendChild(widget));
+                }
+
+                // Add event listeners for sort buttons
+                sortDescBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'desc') {
+                        sortDirection = 'desc';
+                        sortDescBtn.classList.add('sort-btn-active');
+                        sortAscBtn.classList.remove('sort-btn-active');
+                        sortPbbWidgets();
+                    }
+                });
+
+                sortAscBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'asc') {
+                        sortDirection = 'asc';
+                        sortAscBtn.classList.add('sort-btn-active');
+                        sortDescBtn.classList.remove('sort-btn-active');
+                        sortPbbWidgets();
+                    }
+                });
+                
+                groupBySelect.addEventListener('change', sortPbbWidgets);
+
+                // Set initial active sort button state and perform initial sort
+                sortDescBtn.classList.add('sort-btn-active');
+                sortPbbWidgets(); // Initial sort
+            }
+
+            // --- My Bug Bounties (MBB) View Logic ---
+            function setupMyBountiesView() {
+                const grid = document.getElementById('my-bounty-widgets-grid');
+                const allMbbFilterBtn = document.getElementById('mbb-all-filter-btn');
+                const mbbFilterButtons = document.querySelectorAll('.mbb-status-filter-btn, .mbb-visibility-filter-btn, .mbb-special-filter-btn');
+                const groupBySelect = document.getElementById('mbb-group-by-select');
+                const sortDescBtn = document.getElementById('mbb-sort-desc-btn');
+                const sortAscBtn = document.getElementById('mbb-sort-asc-btn');
+                let sortDirection = 'desc';
+
+                // 1. Clone bug bounty widgets
+                const bountyWidgets = document.querySelectorAll('#program-widgets .bug-bounty-widget');
+                bountyWidgets.forEach(widget => {
+                    grid.appendChild(widget.cloneNode(true));
+                });
+                const mbbWidgets = grid.querySelectorAll('.bug-bounty-widget');
+
+                // 2. Filter logic
+                function filterMbbWidgets() {
+                    const activeStatusFilters = new Set([...document.querySelectorAll('#my-bug-bounties-view .mbb-status-filter-btn.filter-btn-active')].map(btn => btn.dataset.statusFilter));
+                    const activeVisibilityFilters = new Set([...document.querySelectorAll('#my-bug-bounties-view .mbb-visibility-filter-btn.filter-btn-active')].map(btn => btn.dataset.visibilityFilter));
+                    const activeSpecialFilters = new Set([...document.querySelectorAll('#my-bug-bounties-view .mbb-special-filter-btn.filter-btn-active')].map(btn => btn.dataset.specialFilter));
+
+                    mbbWidgets.forEach(widget => {
+                        const statusMatch = activeStatusFilters.size === 0 || activeStatusFilters.has(widget.dataset.status);
+                        const visibilityMatch = activeVisibilityFilters.size === 0 || activeVisibilityFilters.has(widget.dataset.visibility);
+                        const isBookmarked = widget.querySelector('.favorite-btn.text-red-500') !== null;
+                        const bookmarkedMatch = activeSpecialFilters.size === 0 || (activeSpecialFilters.has('bookmarked') && isBookmarked);
+
+                        widget.style.display = (statusMatch && visibilityMatch && bookmarkedMatch) ? 'flex' : 'none';
+                    });
+                }
+                
+                mbbFilterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        allMbbFilterBtn.classList.remove('filter-btn-active');
+                        button.classList.toggle('filter-btn-active');
+                        if (![...mbbFilterButtons].some(btn => btn.classList.contains('filter-btn-active'))) {
+                            allMbbFilterBtn.classList.add('filter-btn-active');
+                        }
+                        filterMbbWidgets();
+                    });
+                });
+
+                allMbbFilterBtn.addEventListener('click', () => {
+                    mbbFilterButtons.forEach(btn => btn.classList.remove('filter-btn-active'));
+                    allMbbFilterBtn.classList.add('filter-btn-active');
+                    filterMbbWidgets();
+                });
+
+                // 3. Sorting Logic
+                function sortMbbWidgets() {
+                    const sortBy = groupBySelect.value;
+                    const widgetsToSort = [...mbbWidgets];
+
+                    const sortedWidgets = widgetsToSort.sort((a, b) => {
+                        let valA, valB;
+                         switch(sortBy) {
+                            case 'launch-date':
+                                valA = new Date(a.dataset.launchDate);
+                                valB = new Date(b.dataset.launchDate);
+                                break;
+                            case 'hackers':
+                                valA = parseInt(a.dataset.hackers.replace(/,/g, ''));
+                                valB = parseInt(b.dataset.hackers.replace(/,/g, ''));
+                                break;
+                            case 'reports':
+                                valA = parseInt(a.dataset.reports.replace(/,/g, ''));
+                                valB = parseInt(b.dataset.reports.replace(/,/g, ''));
+                                break;
+                            case 'avg-bounty':
+                                valA = parseInt(a.dataset.avgBounty.replace(/€/g, ''));
+                                valB = parseInt(b.dataset.avgBounty.replace(/€/g, ''));
+                                break;
+                            case 'triage-time':
+                                valA = parseInt(a.dataset.triageTime.replace(/h/g, ''));
+                                valB = parseInt(b.dataset.triageTime.replace(/h/g, ''));
+                                break;
+                            default: return 0;
+                        }
+                        if (isNaN(valA) || isNaN(valB)) return 0;
+                        return sortDirection === 'desc' ? valB - valA : valA - valB;
+                    });
+                    
+                    grid.innerHTML = '';
+                    sortedWidgets.forEach(widget => grid.appendChild(widget));
+                }
+
+                sortDescBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'desc') {
+                        sortDirection = 'desc';
+                        sortDescBtn.classList.add('sort-btn-active');
+                        sortAscBtn.classList.remove('sort-btn-active');
+                        sortMbbWidgets();
+                    }
+                });
+
+                sortAscBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'asc') {
+                        sortDirection = 'asc';
+                        sortAscBtn.classList.add('sort-btn-active');
+                        sortDescBtn.classList.remove('sort-btn-active');
+                        sortMbbWidgets();
+                    }
+                });
+
+                groupBySelect.addEventListener('change', sortMbbWidgets);
+                sortDescBtn.classList.add('sort-btn-active');
+                sortMbbWidgets(); // Initial sort
+            }
+             // --- Assigned Pen Tests (APT) View Logic ---
+            function setupAssignedPenTestsView() {
+                const grid = document.getElementById('assigned-pen-tests-widgets-grid');
+                const allAptFilterBtn = document.getElementById('apt-all-filter-btn');
+                const aptFilterButtons = document.querySelectorAll('.apt-status-filter-btn, .apt-special-filter-btn');
+                const groupBySelect = document.getElementById('apt-group-by-select');
+                const sortDescBtn = document.getElementById('apt-sort-desc-btn');
+                const sortAscBtn = document.getElementById('apt-sort-asc-btn');
+                let sortDirection = 'desc';
+
+                // 1. Clone pen test widgets
+                const penTestWidgets = document.querySelectorAll('#program-widgets > div[data-type="pen-test"]');
+                grid.innerHTML = ''; // Clear previous
+                penTestWidgets.forEach(widget => {
+                    grid.appendChild(widget.cloneNode(true));
+                });
+                const aptWidgets = grid.querySelectorAll('div[data-type="pen-test"]');
+
+                // 2. Filter logic
+                function filterAptWidgets() {
+                    const activeStatusFilters = new Set([...document.querySelectorAll('#assigned-pen-tests-view .apt-status-filter-btn.filter-btn-active')].map(btn => btn.dataset.statusFilter));
+                    const activeSpecialFilters = new Set([...document.querySelectorAll('#assigned-pen-tests-view .apt-special-filter-btn.filter-btn-active')].map(btn => btn.dataset.specialFilter));
+
+                    aptWidgets.forEach(widget => {
+                        const statusMatch = activeStatusFilters.size === 0 || activeStatusFilters.has(widget.dataset.status);
+                        const isBookmarked = widget.querySelector('.favorite-btn.text-red-500') !== null;
+                        const bookmarkedMatch = activeSpecialFilters.size === 0 || (activeSpecialFilters.has('bookmarked') && isBookmarked);
+
+                        widget.style.display = (statusMatch && bookmarkedMatch) ? 'flex' : 'none';
+                    });
+                }
+                
+                aptFilterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        allAptFilterBtn.classList.remove('filter-btn-active');
+                        button.classList.toggle('filter-btn-active');
+                        if (![...aptFilterButtons].some(btn => btn.classList.contains('filter-btn-active'))) {
+                            allAptFilterBtn.classList.add('filter-btn-active');
+                        }
+                        filterAptWidgets();
+                    });
+                });
+
+                allAptFilterBtn.addEventListener('click', () => {
+                    aptFilterButtons.forEach(btn => btn.classList.remove('filter-btn-active'));
+                    allAptFilterBtn.classList.add('filter-btn-active');
+                    filterAptWidgets();
+                });
+
+                // 3. Sorting Logic
+                function sortAptWidgets() {
+                    const sortBy = groupBySelect.value;
+                    const widgetsToSort = [...aptWidgets];
+
+                    const sortedWidgets = widgetsToSort.sort((a, b) => {
+                        let valA, valB;
+                        if (sortBy === 'draft-report-date') {
+                            const dateTextA = a.querySelector('.p-4.border-t p')?.textContent.replace('Draft report on:', '').trim();
+                            const dateTextB = b.querySelector('.p-4.border-t p')?.textContent.replace('Draft report on:', '').trim();
+                            valA = new Date(dateTextA).getTime();
+                            valB = new Date(dateTextB).getTime();
+                        } else { // contract-value
+                            const valueTextA = a.querySelector('.font-bold.text-lg')?.textContent;
+                            const valueTextB = b.querySelector('.font-bold.text-lg')?.textContent;
+                            valA = parseInt(valueTextA.replace(/[^0-9]/g, ''));
+                            valB = parseInt(valueTextB.replace(/[^0-9]/g, ''));
+                        }
+                        
+                        if (isNaN(valA) || isNaN(valB)) return 0;
+                        return sortDirection === 'desc' ? valB - valA : valA - valB;
+                    });
+                    
+                    grid.innerHTML = '';
+                    sortedWidgets.forEach(widget => grid.appendChild(widget));
+                }
+
+                sortDescBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'desc') {
+                        sortDirection = 'desc';
+                        sortDescBtn.classList.add('sort-btn-active');
+                        sortAscBtn.classList.remove('sort-btn-active');
+                        sortAptWidgets();
+                    }
+                });
+
+                sortAscBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'asc') {
+                        sortDirection = 'asc';
+                        sortAscBtn.classList.add('sort-btn-active');
+                        sortDescBtn.classList.remove('sort-btn-active');
+                        sortAptWidgets();
+                    }
+                });
+
+                groupBySelect.addEventListener('change', sortAptWidgets);
+                sortDescBtn.classList.add('sort-btn-active');
+                sortAptWidgets(); // Initial sort
+            }
+
+            // --- Bookmarks View Logic ---
+            function setupBookmarksView() {
+                const grid = document.getElementById('bookmarks-widgets-grid');
+                grid.innerHTML = ''; // Clear previous content
+                const allFilterBtn = document.getElementById('bookmarks-all-filter-btn');
+                const filterButtons = document.querySelectorAll('.bookmarks-status-filter-btn, .bookmarks-type-filter-btn, .bookmarks-visibility-filter-btn');
+                const groupBySelect = document.getElementById('bookmarks-group-by-select');
+                const sortDescBtn = document.getElementById('bookmarks-sort-desc-btn');
+                const sortAscBtn = document.getElementById('bookmarks-sort-asc-btn');
+                let sortDirection = 'desc';
+
+                // Initial population
+                const favoritedWidgets = document.querySelectorAll('#program-widgets > div .favorite-btn.text-red-500');
+                favoritedWidgets.forEach(btn => {
+                    const widget = btn.closest('[data-widget-id]');
+                    if (widget) {
+                        grid.appendChild(widget.cloneNode(true));
+                    }
+                });
+
+                let bookmarkWidgets = grid.querySelectorAll('[data-widget-id]');
+
+                function filterBookmarksWidgets() {
+                    bookmarkWidgets = grid.querySelectorAll('[data-widget-id]'); // Re-query in case it changed
+                    const activeStatusFilters = new Set([...document.querySelectorAll('#bookmarks-view .bookmarks-status-filter-btn.filter-btn-active')].map(btn => btn.dataset.statusFilter));
+                    const activeTypeFilters = new Set([...document.querySelectorAll('#bookmarks-view .bookmarks-type-filter-btn.filter-btn-active')].map(btn => btn.dataset.typeFilter));
+                    const activeVisibilityFilters = new Set([...document.querySelectorAll('#bookmarks-view .bookmarks-visibility-filter-btn.filter-btn-active')].map(btn => btn.dataset.visibilityFilter));
+
+                    bookmarkWidgets.forEach(widget => {
+                        const statusMatch = activeStatusFilters.size === 0 || activeStatusFilters.has(widget.dataset.status);
+                        const typeMatch = activeTypeFilters.size === 0 || activeTypeFilters.has(widget.dataset.type);
+                        const visibilityMatch = activeVisibilityFilters.size === 0 || activeVisibilityFilters.has(widget.dataset.visibility);
+                        widget.style.display = (statusMatch && typeMatch && visibilityMatch) ? 'flex' : 'none';
+                    });
+                }
+
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        allFilterBtn.classList.remove('filter-btn-active');
+                        button.classList.toggle('filter-btn-active');
+                        if (![...filterButtons].some(btn => btn.classList.contains('filter-btn-active'))) {
+                            allFilterBtn.classList.add('filter-btn-active');
+                        }
+                        filterBookmarksWidgets();
+                    });
+                });
+
+                allFilterBtn.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('filter-btn-active'));
+                    allFilterBtn.classList.add('filter-btn-active');
+                    filterBookmarksWidgets();
+                });
+
+                function sortBookmarksWidgets() {
+                    const sortBy = groupBySelect.value;
+                    const widgetsToSort = [...grid.children];
+                    
+                    const sortedWidgets = widgetsToSort.sort((a, b) => {
+                        let valA = getSortableValue(a, sortBy);
+                        let valB = getSortableValue(b, sortBy);
+                        const aHasData = valA !== null;
+                        const bHasData = valB !== null;
+                        if (aHasData && !bHasData) return -1;
+                        if (!aHasData && bHasData) return 1;
+                        if (!aHasData && !bHasData) return 0;
+                        return sortDirection === 'desc' ? valB - valA : valA - valB;
+                    });
+                    
+                    grid.innerHTML = '';
+                    sortedWidgets.forEach(widget => grid.appendChild(widget));
+                }
+
+                sortDescBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'desc') {
+                        sortDirection = 'desc';
+                        sortDescBtn.classList.add('sort-btn-active');
+                        sortAscBtn.classList.remove('sort-btn-active');
+                        sortBookmarksWidgets();
+                    }
+                });
+
+                sortAscBtn.addEventListener('click', () => {
+                    if (sortDirection !== 'asc') {
+                        sortDirection = 'asc';
+                        sortAscBtn.classList.add('sort-btn-active');
+                        sortDescBtn.classList.remove('sort-btn-active');
+                        sortBookmarksWidgets();
+                    }
+                });
+
+                groupBySelect.addEventListener('change', sortBookmarksWidgets);
+                sortDescBtn.classList.add('sort-btn-active');
+                sortBookmarksWidgets(); // Initial sort
+            }
+
+
+            // --- General Widget Logic (Hearts, Details) ---
+            document.body.addEventListener('click', function(event) {
+                if (event.target.closest('.favorite-btn')) {
+                    const button = event.target.closest('.favorite-btn');
+                    const widget = button.closest('[data-widget-id]');
+                    if (!widget) return;
+
+                    const widgetId = widget.dataset.widgetId;
+                    const isFavorited = button.classList.contains('text-red-500');
+                    const heartFilled = `<svg class="w-6 h-6" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>`;
+                    const heartOutline = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>`;
+
+                    // This logic is for the button clicked, but we need to sync all copies of this widget
+                    const allWidgetsWithId = document.querySelectorAll(`[data-widget-id="${widgetId}"]`);
+                    
+                    allWidgetsWithId.forEach(w => {
+                        const btn = w.querySelector('.favorite-btn');
+                        if (isFavorited) {
+                            btn.classList.remove('text-red-500');
+                            btn.classList.add('text-gray-400');
+                            btn.innerHTML = heartOutline;
+                        } else {
+                            btn.classList.remove('text-gray-400');
+                            btn.classList.add('text-red-500');
+                            btn.innerHTML = heartFilled;
+                        }
+                    });
+
+                    // Update bookmarks view if it's initialized
+                    if (bookmarksView.dataset.initialized) {
+                        const bookmarksGrid = document.getElementById('bookmarks-widgets-grid');
+                        const existingBookmark = bookmarksGrid.querySelector(`[data-widget-id="${widgetId}"]`);
+                        
+                        if (isFavorited && existingBookmark) { // Was favorited, now isn't
+                            existingBookmark.remove();
+                        } else if (!isFavorited && !existingBookmark) { // Was not favorited, now is
+                            const originalWidget = document.querySelector(`#program-widgets [data-widget-id="${widgetId}"]`);
+                            if(originalWidget) {
+                                bookmarksGrid.appendChild(originalWidget.cloneNode(true));
+                                // Re-run sort and filter for bookmarks
+                                document.getElementById('bookmarks-group-by-select').dispatchEvent(new Event('change'));
+                                document.getElementById('bookmarks-all-filter-btn').dispatchEvent(new Event('click'));
+                            }
+                        }
+                    }
+
+                    // Re-filter other active views that might be affected by bookmark status
+                    if (!dashboardView.classList.contains('hidden')) filterDashboardWidgets();
+                    if (!myBugBountiesView.classList.contains('hidden')) document.querySelector('#mbb-all-filter-btn').dispatchEvent(new Event('click'));
+                    if (!publicBugBountiesView.classList.contains('hidden')) document.querySelector('#pbb-all-filter-btn').dispatchEvent(new Event('click'));
+                }
+
+                if (event.target.closest('.details-btn')) {
+                     alert('Details button clicked. Navigation logic would be here.');
+                }
+            });
+
+            // --- Assign unique IDs to all widgets for easy tracking
+            document.querySelectorAll('#program-widgets > div').forEach((widget, index) => {
+                widget.dataset.widgetId = `program-${index}`;
+            });
+            
+        });
+    </script>
+
+</body>
+</html>
